@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Emoji Words</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--h:260;--bg:hsl(var(--h) 30% 9%);--panel:hsl(var(--h) 26% 15%);--ink:hsl(var(--h) 60% 95%);--muted:hsl(var(--h) 20% 68%);--pur:hsl(var(--h) 70% 68%);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Outfit",system-ui,sans-serif;display:flex;justify-content:center}
+main{width:100%;max-width:480px;padding:24px 16px 40px;text-align:center}
+h1{margin:0 0 4px;font-size:28px}
+.sub{margin:0 0 16px;color:var(--muted);font-size:15px}
+.emo{display:flex;align-items:flex-start;justify-content:center;gap:6px;background:var(--panel);border-radius:16px;padding:16px 8px;margin:0 auto 16px;max-width:380px;flex-wrap:wrap}
+.emo .e{display:flex;flex-direction:column;align-items:center;min-width:64px}
+.emo .e b{font-size:clamp(44px,15vw,64px);line-height:1.1;font-weight:400;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+.emo .e small{font-size:13px;font-weight:700;color:var(--pur);min-height:18px;margin-top:2px}
+.emo .plus{align-self:center;font-size:28px;font-weight:700;color:var(--muted);padding-bottom:18px}
+.tiles{display:flex;gap:4px;justify-content:center;margin-bottom:14px;flex-wrap:nowrap}
+.t{width:clamp(20px,6.4vw,34px);height:clamp(28px,8.4vw,42px);border-radius:6px;border:2px dashed var(--muted);display:grid;place-items:center;font-size:clamp(14px,4.4vw,22px);font-weight:800;text-transform:uppercase;color:var(--muted)}
+.t.on{border:0;background:var(--pur);color:#1a1033}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+input{font:inherit;font-size:20px;padding:10px 12px;border-radius:8px;border:2px solid var(--pur);background:transparent;color:var(--ink);width:230px;text-align:center;text-transform:lowercase}
+button{font:inherit;font-weight:600;padding:10px 18px;border-radius:8px;border:0;background:var(--pur);color:#1a1033;cursor:pointer}
+button.ghost{background:transparent;color:var(--ink);border:2px solid var(--muted)}
+button:disabled{opacity:.4;cursor:not-allowed}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+#msg{min-height:26px;font-weight:600;margin:6px 0 12px}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:10}
+</style>
+</head>
+<body>
+<main>
+  <h1>Emoji Words</h1>
+  <p class="sub">Put the emojis together to make one word.</p>
+  <div class="emo" id="emo" aria-label="Emoji puzzle"></div>
+  <div class="tiles" id="tiles" aria-label="Answer tiles"></div>
+  <div class="row"><input id="g" autocomplete="off" autocapitalize="none" aria-label="Your answer"><button id="go">Guess</button></div>
+  <div id="msg" role="status"></div>
+  <div class="row"><button class="ghost" id="new">New word</button><button class="ghost" id="hint">Hint</button><button class="ghost" id="give">Give up</button></div>
+</main>
+<script>
+const P=[[["🌙", "📅"], ["moon", "day"], "monday"], [["☀️", "📅"], ["sun", "day"], "sunday"], [["🌃", "🐴"], ["night", "mare"], "nightmare"], [["☀️", "📺"], ["sun", "screen"], "sunscreen"], [["🌞", "💭"], ["day", "dream"], "daydream"], [["👶", "📅"], ["birth", "day"], "birthday"], [["🌶️", "🌿"], ["pepper", "mint"], "peppermint"], [["🧱", "🌸"], ["wall", "flower"], "wallflower"], [["💡", "🏠"], ["light", "house"], "lighthouse"], [["🔑", "📋"], ["key", "board"], "keyboard"], [["🎵", "📖"], ["note", "book"], "notebook"], [["🔙", "📦"], ["back", "pack"], "backpack"], [["☝️", "💅"], ["finger", "nail"], "fingernail"], [["👁️", "🤨"], ["eye", "brow"], "eyebrow"], [["🪑", "👨"], ["chair", "man"], "chairman"], [["🌙", "🚶"], ["moon", "walk"], "moonwalk"], [["🐉", "🪰"], ["dragon", "fly"], "dragonfly"], [["🐂", "🐸"], ["bull", "frog"], "bullfrog"], [["🔴", "🪵"], ["red", "wood"], "redwood"], [["🟢", "🏠"], ["green", "house"], "greenhouse"], [["⚫", "🍓"], ["black", "berry"], "blackberry"], [["☕", "📋"], ["cup", "board"], "cupboard"], [["🔵", "🔔"], ["blue", "bell"], "bluebell"], [["🥵", "🐕"], ["hot", "dog"], "hotdog"], [["📬", "📦"], ["mail", "box"], "mailbox"], [["🧠", "⛈️"], ["brain", "storm"], "brainstorm"], [["🧀", "🎂"], ["cheese", "cake"], "cheesecake"], [["❤️", "🥁"], ["heart", "beat"], "heartbeat"], [["☀️", "🔥"], ["sun", "burn"], "sunburn"], [["🐝", "🍃"], ["be", "leaf"], "belief"], [["🌊", "🪚"], ["sea", "saw"], "seesaw"], [["🚗", "🚶"], ["car", "go"], "cargo"], [["🚗", "🐾"], ["car", "pet"], "carpet"], [["🧊", "🏔️"], ["ice", "berg"], "iceberg"], [["🐻", "🦶"], ["bear", "foot"], "barefoot"], [["🍯", "🌙"], ["honey", "moon"], "honeymoon"], [["👂", "💍"], ["ear", "ring"], "earring"], [["💧", "🍉"], ["water", "melon"], "watermelon"], [["🌾", "🍓"], ["straw", "berry"], "strawberry"], [["🔽", "💧"], ["under", "water"], "underwater"], [["🕷️", "🕸️"], ["spider", "web"], "spiderweb"], [["🐜", "⛰️"], ["ant", "hill"], "anthill"], [["🛏️", "⏰"], ["bed", "time"], "bedtime"], [["🌳", "🏠"], ["tree", "house"], "treehouse"], [["🐱", "🅰️", "🪵"], ["cat", "a", "log"], "catalog"], [["🚗", "🅰️", "🚐"], ["car", "a", "van"], "caravan"], [["🍻", "🐝", "🎱"], ["bar", "be", "cue"], "barbecue"], [["👁️", "🏞️"], ["eye", "land"], "island"], [["🏖️", "🧙‍♀️"], ["sand", "witch"], "sandwich"], [["☠️", "📏"], ["dead", "line"], "deadline"], [["🌌", "🍸"], ["space", "bar"], "spacebar"], [["🌙", "🔦"], ["moon", "beam"], "moonbeam"], [["👩", "🐦"], ["lady", "bird"], "ladybird"], [["🌾", "🍽️"], ["oat", "meal"], "oatmeal"], [["🥚", "🐚"], ["egg", "shell"], "eggshell"], [["🏖️", "📄"], ["sand", "paper"], "sandpaper"], [["🥜", "🐚"], ["nut", "shell"], "nutshell"], [["🐷", "🖊️"], ["pig", "pen"], "pigpen"], [["🖊️", "🔪"], ["pen", "knife"], "penknife"], [["🌽", "🕸️"], ["cob", "web"], "cobweb"], [["🐱", "😴"], ["cat", "nap"], "catnap"], [["🛏️", "🐛"], ["bed", "bug"], "bedbug"], [["👄", "🏒"], ["lip", "stick"], "lipstick"], [["💪", "🪑"], ["arm", "chair"], "armchair"], [["☁️", "📏"], ["sky", "line"], "skyline"], [["🚆", "🛣️"], ["rail", "way"], "railway"], [["🍲", "🕳️"], ["pot", "hole"], "pothole"], [["👟", "🎀"], ["shoe", "lace"], "shoelace"], [["✝️", "💬"], ["cross", "word"], "crossword"], [["🌠", "🦴"], ["wish", "bone"], "wishbone"], [["🕯️", "💡"], ["candle", "light"], "candlelight"], [["🔽", "🐕"], ["under", "dog"], "underdog"], [["🦴", "🔥"], ["bone", "fire"], "bonfire"], [["🌙", "✨"], ["moon", "shine"], "moonshine"], [["🔽", "🧍"], ["under", "stand"], "understand"], [["💔", "🏃"], ["break", "fast"], "breakfast"], [["🎫", "⚓"], ["pass", "port"], "passport"], [["🌊", "👦"], ["sea", "son"], "season"], [["🛣️", "🪨"], ["mile", "stone"], "milestone"], [["🌽", "🐕"], ["corn", "dog"], "corndog"], [["🎡", "🍻", "🚣"], ["wheel", "bar", "row"], "wheelbarrow"]];
+const HUES=[0,15,155,180,205,230,260,285,320];
+const $=id=>document.getElementById(id);
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let deck=[],cur,hintLevel=0,over=false,solved=false,hue=-1;
+function draw(){
+  const [em,names,ans]=cur;
+  $("emo").innerHTML=em.map((e,i)=>`<div class="e"><b>${e}</b><small>${i<hintLevel-1?names[i]:""}</small></div>`).join('<div class="plus">+</div>');
+  const show=solved||over,first=hintLevel>=1;
+  $("tiles").innerHTML=[...ans].map((c,i)=>`<div class="t${show||(first&&i===0)?" on":""}">${show||(first&&i===0)?c:""}</div>`).join("");
+}
+function lock(){over=true;$("g").disabled=true;$("go").disabled=true;$("hint").disabled=true}
+function start(){
+  const prev=cur&&cur[2];
+  if(!deck.length){deck=shuffle(P);if(prev&&deck[deck.length-1][2]===prev)deck.unshift(deck.pop())}
+  cur=deck.pop();
+  let h;do{h=HUES[Math.floor(Math.random()*HUES.length)]}while(h===hue);
+  hue=h;document.documentElement.style.setProperty("--h",h);
+  hintLevel=0;over=false;solved=false;
+  $("msg").textContent="";$("g").value="";$("g").disabled=false;$("go").disabled=false;$("hint").disabled=false;
+  draw();$("g").focus();
+}
+function guess(){
+  if(over)return;
+  const w=$("g").value.trim().toLowerCase().replace(/[^a-z]/g,"");
+  if(!w)return;
+  const ans=cur[2];
+  if(w.length!==ans.length){$("msg").textContent=`The answer has ${ans.length} letters. Your answer does not fit the tiles.`;return}
+  $("g").value="";
+  if(w===ans){solved=true;lock();$("msg").textContent="You got it!";draw();confetti()}
+  else{$("msg").textContent="Not quite. Try again.";$("g").focus()}
+}
+function hint(){
+  if(over)return;
+  if(hintLevel>=3){$("msg").textContent="No more hints for this one.";return}
+  hintLevel=Math.min(hintLevel+1,cur[0].length+1);
+  $("msg").textContent=hintLevel===1?"Hint: here is the first letter.":`Hint: that emoji stands for "${cur[1][hintLevel-2]}".`;
+  draw();
+}
+function giveUp(){
+  if(over)return;
+  lock();$("msg").textContent=`The word was ${cur[2]}.`;hintLevel=cur[0].length+1;draw();
+}
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const c=document.createElement("canvas");c.id="confetti";c.width=innerWidth;c.height=innerHeight;document.body.append(c);
+  const x=c.getContext("2d"),cols=[0,45,150,200,260,320].map(h=>`hsl(${h} 85% 55%)`);
+  const ps=Array.from({length:150},()=>({x:innerWidth/2+(Math.random()-.5)*160,y:innerHeight*.35,vx:(Math.random()-.5)*15,vy:-Math.random()*13-4,s:6+Math.random()*6,r:Math.random()*6,vr:(Math.random()-.5)*.4,c:cols[Math.floor(Math.random()*cols.length)]}));
+  let t=0;
+  (function f(){
+    x.clearRect(0,0,c.width,c.height);t++;
+    ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.r+=p.vr;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});
+    if(t<160)requestAnimationFrame(f);else c.remove();
+  })();
+}
+$("go").onclick=guess;
+$("g").onkeydown=e=>{if(e.key==="Enter")guess()};
+$("hint").onclick=hint;
+$("give").onclick=giveUp;
+$("new").onclick=start;
+start();
+</script>
+</body>
+</html>
